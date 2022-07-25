@@ -7,7 +7,7 @@ function App() {
   const onChange = (event) => setKeyword(event.target.value);
 
   useEffect(() => {
-    console.log("only once");
+    console.log("only once :)");
   }, []);
   useEffect(() => {
     console.log("keyword changes");
