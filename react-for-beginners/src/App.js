@@ -9,10 +9,9 @@ function App() {
     if (toDo === "") {
       return;
     }
-    setToDos((current) => [toDo, ...current]);
     setToDo("");
+    setToDos((current) => [toDo, ...current]);
   };
-  console.log(toDos);
   return (
     <div>
       <h1>My To Dos: {toDos.length}</h1>
@@ -25,6 +24,12 @@ function App() {
         />
         <button>Add</button>
       </form>
+      <hr />
+      <ul>
+        {toDos.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     </div>
   );
 }
