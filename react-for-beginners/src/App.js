@@ -1,35 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [toDo, setToDo] = useState("");
-  const [toDos, setToDos] = useState([]);
-  const onChange = (event) => setToDo(event.target.value);
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (toDo === "") {
-      return;
-    }
-    setToDo("");
-    setToDos((current) => [toDo, ...current]);
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  const [coinIndex, setCoinIndex] = useState(0);
+  const [usd, setUsd] = useState(0);
+  const onSelect = (event) => {
+    setCoinIndex(event.target.value);
   };
+  const onChange = (event) => {
+    setUsd(event.target.value);
+  };
+  useEffect(() => {
+    fetch("https://api.coinpaprika.com/v1/tickers")
+      .then((response) => response.json())
+      .then((json) => {
+        setCoins(json);
+        setLoading(false);
+      });
+  }, []);
   return (
     <div>
-      <h1>My To Dos: {toDos.length}</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={toDo}
-          type="text"
-          placeholder="Write to do"
-        />
-        <button>Add</button>
-      </form>
-      <hr />
-      <ul>
-        {toDos.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+      <h1>Coin ({coins.length})</h1>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <select onChange={onSelect}>
+          {coins.map((coin, index) => (
+            <option key={coin.id} value={index}>
+              {coin.name} ({coin.symbol}): ${coin.quotes["USD"].price} USD
+            </option>
+          ))}
+        </select>
+      )}
+      <br />
+      USD: <input type="number" value={usd} onChange={onChange} />
+      <br />
+      Coin:{" "}
+      <input
+        type="text"
+        value={
+          coins.length > 0 ? usd / coins[coinIndex].quotes["USD"].price : 0
+        }
+        readOnly
+      />
     </div>
   );
 }
